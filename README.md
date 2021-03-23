@@ -5,17 +5,14 @@ Classes:
 	NASA_coeff
 	Sfuel
 	Ggas
-	
 Methods:
 	Elements:
 		molar_weight
 		molesperkg
-	
 	NASA_coeff:
 		cp_coeff_NASA
 		polyaveNASA
 		gas_cp
-	
 	Sfuel:
 		ar_to_db
 		populate_proxult
@@ -24,7 +21,6 @@ Methods:
 		populate
 		print_fuel
 		flue_gas
-	
 	Ggas:
 		populate
 		update
@@ -34,4 +30,3 @@ Methods:
 		burn_stoich
 		Tad
 		print
-		
