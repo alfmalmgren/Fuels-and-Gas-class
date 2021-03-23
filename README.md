@@ -1,32 +1,32 @@
 A project for a fuels and a gas class
 
-Classes:<br/>
-	Elements<br/>
-	NASA_coeff<br/>
-	Sfuel<br/>
-	Ggas<br/>
-Methods:<br/>
-	Elements:<br/>
-		molar_weight<br/>
-		molesperkg<br/>
-	NASA_coeff:<br/>
-		cp_coeff_NASA<br/>
-		polyaveNASA<br/>
-		gas_cp<br/>
-	Sfuel:<br/>
-		ar_to_db<br/>
-		populate_proxult<br/>
-		populate_masstemp<br/>
-		populate_ashfusion<br/>
-		populate<br/>
-		print_fuel<br/>
-		flue_gas<br/>
-	Ggas:<br/>
-		populate<br/>
-		update<br/>
-		mix<br/>
-		CV_gas<br/>
-		burn<br/>
-		burn_stoich<br/>
-		Tad<br/>
-		print<br/>
+# Classes:<br/>
+	> Elements<br/>
+	> NASA_coeff<br/>
+	> Sfuel<br/>
+	> Ggas<br/>
+# Methods:<br/>
+	## Elements:<br/>
+		> molar_weight<br/>
+		> molesperkg<br/>
+	## NASA_coeff:<br/>
+		> cp_coeff_NASA<br/>
+		> polyaveNASA<br/>
+		> gas_cp<br/>
+	## Sfuel:<br/>
+		> ar_to_db<br/>
+		> populate_proxult<br/>
+		> populate_masstemp<br/>
+		> populate_ashfusion<br/>
+		> populate<br/>
+		> print_fuel<br/>
+		> flue_gas<br/>
+	## Ggas:<br/>
+		> populate<br/>
+		> update<br/>
+		> mix<br/>
+		> CV_gas<br/>
+		> burn<br/>
+		> burn_stoich<br/>
+		> Tad<br/>
+		> print<br/>
