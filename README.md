@@ -1,32 +1,32 @@
 A project for a fuels and a gas class
 
-Classes:
-	Elements
-	NASA_coeff
-	Sfuel
-	Ggas
-Methods:
-	Elements:
-		molar_weight
-		molesperkg
-	NASA_coeff:
-		cp_coeff_NASA
-		polyaveNASA
-		gas_cp
-	Sfuel:
-		ar_to_db
-		populate_proxult
-		populate_masstemp
-		populate_ashfusion
-		populate
-		print_fuel
-		flue_gas
-	Ggas:
-		populate
-		update
-		mix
-		CV_gas
-		burn
-		burn_stoich
-		Tad
-		print
+Classes:<br/>
+	Elements<br/>
+	NASA_coeff<br/>
+	Sfuel<br/>
+	Ggas<br/>
+Methods:<br/>
+	Elements:<br/>
+		molar_weight<br/>
+		molesperkg<br/>
+	NASA_coeff:<br/>
+		cp_coeff_NASA<br/>
+		polyaveNASA<br/>
+		gas_cp<br/>
+	Sfuel:<br/>
+		ar_to_db<br/>
+		populate_proxult<br/>
+		populate_masstemp<br/>
+		populate_ashfusion<br/>
+		populate<br/>
+		print_fuel<br/>
+		flue_gas<br/>
+	Ggas:<br/>
+		populate<br/>
+		update<br/>
+		mix<br/>
+		CV_gas<br/>
+		burn<br/>
+		burn_stoich<br/>
+		Tad<br/>
+		print<br/>
