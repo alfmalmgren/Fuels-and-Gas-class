@@ -583,9 +583,9 @@ class Sfuel(Elements, NASA_coeff):
         #Required oxygen for stoichiometric combustion minus oxygen in the fuel
         O2_req = molesCO2 + self.molH/4.0 + molesSO2 - self.molO/2.0
         #Required air to provide this oxygen
-        air_req = O2_req/0.21
+        air_req = O2_req/oxidiser.O2_v*100.0    #0.21  # replaced 0.21 by oxidiser.O2_v*100.0
         #Nitrogen in the added air and in the fuel
-        molesN2 = air_req * 0.79 + self.molN/2.0
+        molesN2 = air_req * oxidiser.N2_v / 100.0 + self.molN/2.0  # replaced 0.79 by oxidiser.N2_v / 100.0
         #Convert to volume %
         moles_tot = molesCO2+molesH2O+molesSO2+molesHCl+molesN2+molesHCl
         #CO2 = molesCO2/moles_tot*100.0

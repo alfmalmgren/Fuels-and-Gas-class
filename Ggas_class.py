@@ -427,8 +427,8 @@ class Gas(Elements, NASA_coeff):
     def Tad (self,NCV, air_ratio):
         '''
         Input:
-            T0     = Initial temperature(Kelvin)            [self.T0]
-            NCV    = Net Calorific Value(MJ/kg fuel)
+            T0        = Initial temperature(Kelvin)            [self.T0]
+            NCV       = Net Calorific Value(MJ/kg fuel)
             air_ratio = ratio kg air/kg fuel
 
         Output:
