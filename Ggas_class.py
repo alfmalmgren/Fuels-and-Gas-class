@@ -424,11 +424,12 @@ class Gas(Elements, NASA_coeff):
             Q = self.burn()  # Burn the resulting gas and return [W]
         return  (Q, kg_O2_stoich)
 #==============================================================================
-    def Tad (self,NCV):
+    def Tad (self,NCV, air_ratio):
         '''
         Input:
             T0     = Initial temperature(Kelvin)            [self.T0]
             NCV    = Net Calorific Value(MJ/kg fuel)
+            air_ratio = ratio kg air/kg fuel
 
         Output:
             TAdNew = Calculated Adiabatic flame temperature (Kelvin)
@@ -446,8 +447,9 @@ class Gas(Elements, NASA_coeff):
         while abs(TAdNew-TAdOld)>1.0 and n<100:
             TAdOld=TAdNew
             cp = self.gas_cp(T0,TAdOld)
-            #print('T0, TAdNew, cp, massflow:',T0, TAdNew, cp, self.Massflow)
-            TAdNew=T0+((NCV)/(self.Massflow*cp))
+            print('T0: {:6.2f}, TAdNew: {:6.2f}, cp: {:7.2f}, massflow: {:6.2f}'.format(T0, TAdNew, cp, self.Massflow))
+            # air_ratio+1 is kg FG/kg fuel
+            TAdNew = T0 + NCV/cp/(air_ratio+1)
             n+=1
             #print n, TAdNew, NCV, MassFlowFlueGas
             if n==100:

@@ -524,16 +524,16 @@ class Sfuel(Elements, NASA_coeff):
         print('Sum   =  %5.2f %% ' % (sum))
         print('\n')
         
-        if (self.IDT_ox_C!=0 or self.ST_ox_C!=0 or self.HT_ox_C!=0 or self.FT_ox_C!=0 or\
-            self.IDT_red_C!=0 or self.ST_red_C!=0 or self.HT_red_C!=0 or self.FT_red_C!=0):
+        if (self.IDT_ox!=0 or self.ST_ox!=0 or self.HT_ox!=0 or self.FT_ox!=0 or\
+            self.IDT_red!=0 or self.ST_red!=0 or self.HT_red!=0 or self.FT_red!=0):
             print('\nASH FUSION TEMPERATURES')
             print('      Oxidising    Reducing')
-            print('IDT   %5.0f       %5.0f  (°C)' % (self.IDT_ox_C, self.IDT_red_C))
-            print('ST    %5.0f       %5.0f  (°C)' % (self.ST_ox_C, self.ST_red_C))
-            print('HT    %5.0f       %5.0f  (°C)' % (self.HT_ox_C, self.HT_red_C))
-            print('FT    %5.0f       %5.0f  (°C)' % (self.FT_ox_C, self.FT_red_C))
+            print('IDT   %5.0f       %5.0f  (°C)' % (self.IDT_ox, self.IDT_red))
+            print('ST    %5.0f       %5.0f  (°C)' % (self.ST_ox, self.ST_red))
+            print('HT    %5.0f       %5.0f  (°C)' % (self.HT_ox, self.HT_red))
+            print('FT    %5.0f       %5.0f  (°C)' % (self.FT_ox, self.FT_red))
 ###############################################################################
-    def flue_gas(self, percO2, FG, NCV):
+    def flue_gas(self, percO2, FG, oxidiser, NCV, verbose=0):
         '''
         This function calculates the fluegas composition, volume and mass of 
         flue gas produced from combustion of one kg fuel and the amount of 
@@ -543,18 +543,16 @@ class Sfuel(Elements, NASA_coeff):
         for a flue gas with the O2 concentration given in the input parameters.
         
         Input:
-            fuel          An onject of the Sfuel class containing the 
+            self          An onject of the Sfuel class containing the 
                           composition of the fuel
-        
-        =====================================================
-        Input:
             percO2    -   Percent O2 in the flue gas
             FG        -   gas object for the flue gas
 
             NCV       -   Net Calorific Value [J/kg fuel]
-            Ash       -   Ash content in the fuel [%]
-            S         -   S content in the fuel [%]
-            extra_H2O -   Additional water [moles/kg fuel]
+            verbose   -   0 = no printout, 1=some printout, 2=all printout
+      #      Ash       -   Ash content in the fuel [%]
+      #      S         -   S content in the fuel [%]
+      #      extra_H2O -   Additional water [moles/kg fuel]
         
         Output:
             listfg    -    The results of the calculations are returned in a list
@@ -670,7 +668,8 @@ class Sfuel(Elements, NASA_coeff):
     
      #   percentGasDict={'CO2':nCO2,'O2':nO2,'H2O':nH2O,'SO2':nSO2,'HCl':nHCl,'N2':nN2, 'CO':0.0}
         massflow = self.massflow * (1 + nair_req)
-        print('Populating FG with massflow:',massflow)
+        if verbose>0:
+            print('Populating FG with massflow:',massflow)
         FG.populate(Name='',CO2=nCO2,O2=nO2,H2O=nH2O,SO2=nSO2,HCl=nHCl,N2=nN2,CO=0.0,massflow=massflow,NCV=NCV)
         
         Temp0=20.0+273.15
@@ -678,51 +677,52 @@ class Sfuel(Elements, NASA_coeff):
         # NCV given per kg of solid fuel, must be converted to per kg of gas  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
         
-        Tad = FG.Tad(NCV)   # Calculate the adiabatic flame temperature
-        Cp = FG.gas_cp(Temp0,Tad)
+        self.Tad = FG.Tad(NCV, airmass)   # Calculate the adiabatic flame temperature
+        Cp = FG.gas_cp(Temp0,self.Tad)
 
         #CO2 emissions inkg/t fuel
         CO2pertonne = molesCO2*44.0095
+        if verbose>0: 
+            print("\n\n==================== Flue gas at %6.2f %% O2 (wet gas) ====================" % percO2 )
+            print("\n\nFLUE GAS COMPOSITION")
+            print("         (wet)     (dry)")
+            print('CO2:    %6.2f %%  %6.2f %%' % (nCO2, dry_nCO2))
+            print('H2O:    %6.2f %%  %6.2f %%' % (nH2O, dry_nH2O))
+            print('SO2:    %6.2f %%  %6.2f %%' % (nSO2, dry_nSO2))
+            print('HCl:    %6.2f %%  %6.2f %%' % (nHCl, dry_nHCl))
+            print('N2:     %6.2f %%  %6.2f %%' % (nN2, dry_nN2))
+            print('O2:     %6.2f %%  %6.2f %%' % (nO2, dry_nO2))
+            print('Tot:    %6.2f %%  %6.2f %%\n' % (ntot, dry_ntot))
+        
+            print("Flue gas volume per kg fuel:       %7.2f Nm3" % FGvolume)
+            print("Flue gas mass per kg fuel:         %7.2f kg" % FG.Massflow)
+            print("Air requirement per kg fuel:       %7.2f Nm3" % nair_req)
+            print("Required air mass per kg fuel:     %7.2f kg" % airmass)
+            print("")
+            print("Adiabatic temperature:             %7.2f degrees C" % (self.Tad-273.15))
+            print("Cp of the flue gas:                %7.2f J/kg/K\n" % (Cp))
             
-        print("\n\n==================== Flue gas at %6.2f %% O2 (wet gas) ====================" % percO2 )
-        print("\n\nFLUE GAS COMPOSITION")
-        print("         (wet)     (dry)")
-        print('CO2:    %6.2f %%  %6.2f %%' % (nCO2, dry_nCO2))
-        print('H2O:    %6.2f %%  %6.2f %%' % (nH2O, dry_nH2O))
-        print('SO2:    %6.2f %%  %6.2f %%' % (nSO2, dry_nSO2))
-        print('HCl:    %6.2f %%  %6.2f %%' % (nHCl, dry_nHCl))
-        print('N2:     %6.2f %%  %6.2f %%' % (nN2, dry_nN2))
-        print('O2:     %6.2f %%  %6.2f %%' % (nO2, dry_nO2))
-        print('Tot:    %6.2f %%  %6.2f %%\n' % (ntot, dry_ntot))
-        
-        print("Flue gas volume per kg fuel:       %7.2f Nm3" % FGvolume)
-        print("Flue gas mass per kg fuel:         %7.2f kg" % FG.Massflow)
-        print("Air requirement per kg fuel:       %7.2f Nm3" % nair_req)
-        print("Required air mass per kg fuel:     %7.2f kg" % airmass)
-        print("")
-        print("Adiabatic temperature:             %7.2f degrees C" % (self.Tad-273.15))
-        print("Cp of the flue gas:                %7.2f J/kg/K\n" % (Cp))
-        
-        print("Concentration ash in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (AshInFG,AshInFG_dry))
-        print("or: %.1f kg ash/t fuel or: %.4f kg ash/GJ fuel" % (Ashpertonne,AshperGJ))
-        
-        print("Flue gas cleaned to 20 mg particulate per Nm3, would produce: %.2f g ash/t fuel or %.2f g ash/GJ fuel\n" % (CleanAshPert,CleanAshPerGJ))
-        print("99%% filter efficiency would give: %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas\n" % (CleanAshInFG,CleanAshInFG_dry))
-        print('1 ESP field would have to be %4.1f %% efficient to achieve 20 mg/Nm3 particulate in the flue gas ' % (oneField*100.0))
-        print('2 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (twoFields*100.0))
-        print('3 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (threeFields*100.0))
-        print('4 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (fourFields*100.0))
-        print('5 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (fiveFields*100.0))
-        print("\n")
-        print("Concentration SO2 in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (SO2InFG , SO2InFG_dry))
-        print("Assuming 100% conversion of fuel S to SO2 and no capture.")
-        print("Concentration fuel NOx in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (NO2InFG , NO2InFG_dry))
-        print("Assuming 100% conversion of fuel N to NO2 and no reduction of other NOx sources.")
+        if verbose>1:    
+            print("Concentration ash in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (AshInFG,AshInFG_dry))
+            print("or: %.1f kg ash/t fuel or: %.4f kg ash/GJ fuel" % (Ashpertonne,AshperGJ))
+            
+            print("Flue gas cleaned to 20 mg particulate per Nm3, would produce: %.2f g ash/t fuel or %.2f g ash/GJ fuel\n" % (CleanAshPert,CleanAshPerGJ))
+            print("99%% filter efficiency would give: %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas\n" % (CleanAshInFG,CleanAshInFG_dry))
+            print('1 ESP field would have to be %4.1f %% efficient to achieve 20 mg/Nm3 particulate in the flue gas ' % (oneField*100.0))
+            print('2 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (twoFields*100.0))
+            print('3 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (threeFields*100.0))
+            print('4 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (fourFields*100.0))
+            print('5 ESP fields would have to be %3.0f %% efficient each to achieve 20 mg/Nm3 particulate in the flue gas ' % (fiveFields*100.0))
+            print("\n")
+            print("Concentration SO2 in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (SO2InFG , SO2InFG_dry))
+            print("Assuming 100% conversion of fuel S to SO2 and no capture.")
+            print("Concentration fuel NOx in wet flue gas:    %.0f mg/Nm3 or %.0f mg/Nm3 in dry gas" % (NO2InFG , NO2InFG_dry))
+            print("Assuming 100% conversion of fuel N to NO2 and no reduction of other NOx sources.")
 
         #CO2 emissions in kg/GJ
-        if FG.NCV_given>0.0:
-            CO2emission = molesCO2/FG.NCV_given*44.0095e6
-            print("\nEmissions of CO2 will be %.2f kg/GJ fuel and %.2f kg/t fuel" % (CO2emission, CO2pertonne))
+            if FG.NCV_given>0.0:
+                CO2emission = molesCO2/FG.NCV_given*44.0095e6
+                print("\nEmissions of CO2 will be %.2f kg/GJ fuel and %.2f kg/t fuel" % (CO2emission, CO2pertonne))
         print("\n")
 
         
